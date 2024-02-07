@@ -1,0 +1,30 @@
+	.setcpu "65C02"
+	.segment "CODE"
+	.export _init
+
+CHROUT = $F816
+CHRIN = $F80B
+ACIA_INIT = $F800
+
+IN = $2000
+BFARR = $3000
+
+_init:
+	JSR ACIA_INIT
+	LDA #$00
+	TAY
+ZERO:
+	DEY
+	STA IN, Y
+	STA BFARR, Y
+	BNE ZERO
+LOOP:
+	JSR CHRIN
+	JSR CHROUT
+	CMP #$0D
+	BEQ EXEC
+	STA IN,Y
+	INY
+	JMP LOOP
+
+.include "eval.s"
